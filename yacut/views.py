@@ -1,4 +1,4 @@
-from flask import abort, flash, redirect, render_template, url_for
+from flask import abort, flash, redirect, render_template
 
 from settings import Config
 from . import app
@@ -19,8 +19,8 @@ def index():
         if not isinstance(link, URLMap):
             flash(link, 'error')
             return render_template('index.html', form=form)
-        flash(f'Ваша новая ссылка готова: {Config.DOMAIN}/{link.short}')
-        return redirect(url_for('index'), 200)
+        flash('Ваша новая ссылка готова:')
+        flash(f'{Config.DOMAIN}/{link.short}', 'link')
 
     return render_template('index.html', form=form)
 
