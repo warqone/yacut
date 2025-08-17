@@ -1,76 +1,60 @@
 {% extends "base.html" %} 
 {% block title %}YaCut - укоротитель ссылок{%endblock %} 
 {% block content %}
-  <main>
-    <section class="container my-5 px-4">
-      <h1 class="text-center"><span style="color:red">Ya</span>Cut</h1>
-      <p class="text-center my-4">
-        Создайте короткую ссылку автоматически или предложите свой вариант
-      </p>
+  <h1 class="text-center"><span style="color:red">Ya</span>Cut</h1>
+  <p class="text-center my-4">
+    Создайте короткую ссылку автоматически или предложите свой вариант
+  </p>
 
-      <div class="container">
-        <div class="row my-3">
+  <div class="container">
+      <div class="row my-3">
+          <div class="col-sm"></div>
           <div class="col-sm">
+              <form method="POST" novalidate>
+                  {{ form.csrf_token }}
+                  {{ form.original_link(class="form-control form-control-lg py-2 mb-3", placeholder="Длинная ссылка") }}
+                  <p class="text-danger">
+                      <span style="color:red">
+                          {% for error in form.original_link.errors %}
+                              {{ error }}
+                          {% endfor %}
+                      </span>
+                  </p>
+
+                  {{ form.custom_id(class="form-control form-control-lg py-2 mb-3", placeholder="Ваш вариант короткой ссылки") }}
+                  <p class="text-danger">
+                      <span style="color:red">
+                          {% for error in form.custom_id.errors %}
+                              {{ error }}
+                          {% endfor %}
+                      </span>
+                  </p>
+
+                  {{ form.submit(class="btn btn-primary") }}
+              </form>
           </div>
-          <div class="col-sm">
-            <form method="POST" novalidate>
-              {{ form.csrf_token }}
-              {{ form.original_link(class="form-control form-control-lg py-2 mb-3", placeholder="Длинная ссылка") }}
-              {% if form.original_link.errors %}
-                <p class="text-danger">
-                  <span style="color:red">
-                    {% for error in form.original_link.errors %}
-                      {{ error }}
-                    {% endfor %}
-                  </span>
-                </p>
-              {% endif %}
-              {{ form.custom_id(class="form-control form-control-lg py-2 mb-3", placeholder="Ваш вариант короткой ссылки") }}
-              {% if form.custom_id.errors %}
-                <p class="text-danger">
-                  <span style="color:red">
-                    {% for error in form.custom_id.errors %}
-                      {{ error }}
-                    {% endfor %}
-                  </span>
-                </p>
-              {% endif %}
-              {{ form.submit(class="btn btn-primary") }}
-            </form>
-          </div>
-          <div class="col-sm">
-          </div>
-        </div>
+          <div class="col-sm"></div>
       </div>
+  </div>
 
-      <div class="container">
-        <div class="row ">
+  <div class="container">
+      <div class="row">
+          <div class="col-sm"></div>
           <div class="col-sm">
-          </div>
-          <div class="col-sm">
-            <p class="text-center">
-              {% with messages = get_flashed_messages(with_categories=true) %}
-                {% if messages %}
-                  {% for category, message in messages %}
-                    {% if category == 'link' %}
+              <p class="text-center">
+                  {% for category, message in get_flashed_messages(with_categories=true) %}
                       <h5 class="text-center">
-                        <a href="{{ message }}">{{ message }}</a>
+                          {% if category == 'link' %}
+                              Ваша новая ссылка готова:<br>
+                              <a href="{{ message }}">{{ message }}</a>
+                          {% else %}
+                              {{ message }}
+                          {% endif %}
                       </h5>
-                    {% else %}
-                      <h5 class="text-center">
-                        {{ message }}
-                      </h5>
-                    {% endif %}
                   {% endfor %}
-                {% endif %}
-              {% endwith %}
-            </p>
+              </p>
           </div>
-          <div class="col-sm">
-          </div>
-        </div>
+          <div class="col-sm"></div>
       </div>
-
-    </section>
-  </main>
+  </div>
 {% endblock %}

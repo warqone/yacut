@@ -1,23 +1,24 @@
-from flask import abort, flash, redirect, render_template
+from http import HTTPStatus
+
+from flask import flash, redirect, render_template
 
 from settings import Config
-from . import app
-from .forms import ShortLinkForm
-from .models import URLMap
+from yacut import app, forms, models, error_handlers
 
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    form = ShortLinkForm()
+    form = forms.ShortLinkForm()
 
     if form.validate_on_submit():
         original_link = form.original_link.data.strip()
         custom_id = (
             form.custom_id.data.strip() if form.custom_id.data else None
         )
-        link = URLMap.create_short_url(original_link, custom_id)
-        if not isinstance(link, URLMap):
-            flash(link, 'error')
+        try:
+            link = models.URLMap.create_short_url(original_link, custom_id)
+        except error_handlers.FormException as e:
+            flash(e.message, 'error')
             return render_template('index.html', form=form)
         flash('Ваша новая ссылка готова:')
         flash(f'{Config.DOMAIN}/{link.short}', 'link')
@@ -27,7 +28,5 @@ def index():
 
 @app.route('/<string:short_id>')
 def redirect_to_original(short_id):
-    link = URLMap.get_by_short_url(short_id)
-    if not link:
-        return abort(404)
-    return redirect(link, 302)
+    url = models.URLMap.query.filter_by(short=short_id).first_or_404()
+    return redirect(url.original, HTTPStatus.FOUND)
