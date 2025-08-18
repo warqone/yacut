@@ -42,16 +42,16 @@
           <div class="col-sm"></div>
           <div class="col-sm">
               <p class="text-center">
-                  {% for category, message in get_flashed_messages(with_categories=true) %}
-                      <h5 class="text-center">
-                          {% if category == 'link' %}
-                              Ваша новая ссылка готова:<br>
-                              <a href="{{ message }}">{{ message }}</a>
-                          {% else %}
-                              {{ message }}
-                          {% endif %}
-                      </h5>
-                  {% endfor %}
+                {% for message in get_flashed_messages() %}
+                    <h5 class="text-center">{{ message }}</h5>
+                {% endfor %}
+                
+                {% if short_url %}
+                  <h5 class="text-center">
+                    Ваша новая ссылка готова:<br>
+                      <a href="{{ short_url }}">{{ short_url }}</a>
+                  </h5>
+                {% endif %}
               </p>
           </div>
           <div class="col-sm"></div>

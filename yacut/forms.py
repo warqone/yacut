@@ -11,7 +11,10 @@ class ShortLinkForm(FlaskForm):
         validators=[
             DataRequired(message='Обязательное поле'),
             Length(
-                min=const.MIN_LINK_LENGTH, message='Слишком короткая ссылка.'
+                min=const.MIN_LINK_LENGTH,
+                max=const.MAX_LINK_LENGTH,
+                message=f'Длина ссылки должна быть от '
+                f'{const.MIN_LINK_LENGTH} до {const.MAX_LINK_LENGTH} символов.'
             )
         ]
     )

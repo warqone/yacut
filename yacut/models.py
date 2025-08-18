@@ -9,7 +9,7 @@ from yacut import constants as const
 
 class URLMap(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    original = db.Column(db.String(), nullable=False)
+    original = db.Column(db.String(const.MAX_LINK_LENGTH), nullable=False)
     short = db.Column(
         db.String(const.SHORT_LINK_LENGTH), nullable=False, unique=True,
         index=True
@@ -24,6 +24,8 @@ class URLMap(db.Model):
                     const.SHORT_LINK_GENERATE_LENGTH))
             if not URLMap.check_short_url(short_id):
                 return short_id
+            raise error_handlers.FormException(
+                'Не удалось создать уникальный вариант короткой ссылки.')
 
     @staticmethod
     def create_short_url(
@@ -33,7 +35,7 @@ class URLMap(db.Model):
             if URLMap.check_short_url(short_url):
                 raise error_handlers.FormException(
                     'Предложенный вариант короткой ссылки уже существует.')
-            elif not re.match(const.PATTERN_VALIDATION_SHORT_LINK, short_url):
+            if not re.match(const.PATTERN_VALIDATION_SHORT_LINK, short_url):
                 raise error_handlers.FormException(
                     'Указано недопустимое имя для короткой ссылки'
                 )
